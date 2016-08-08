@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>React Notes</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <h1>React-Notes</h1>
+    <h3>The goal of this exercise is to use react correctly in order to create an app that saves notes in a JSON file.</h3>
+    <ol>
+      <li><i class="fa fa-check" aria-hidden="true"></i> Get Libs Loaded Successfully.</li>
+      <li><i class="fa fa-check" aria-hidden="true"></i> Get Hello Loaded via Component.</li>
+      <li><i class="fa fa-check" aria-hidden="true"></i> Get Input Field On Page.</li>
+      <li><i class="fa fa-check" aria-hidden="true"></i> Add a submit button</li>
+      <li>Start A Server via Hapi or Express</li>
+      <li>Get Static Data Loaded on The Page</li>
+    </ol>
+
+    <div class="react-endpoint" id="example">
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
+    <script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
+    <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+
+    <script type="text/babel">
+      var NotesBox = React.createClass({
+        render: function(){
+          return (
+            <div class="NotesBox">
+
+              <NotesForm />
+              <p>It is {this.props.date.toTimeString()}</p>
+            </div>
+          )
+        }
+      });
+
+      var NotesForm =  React.createClass({
+
+        getInitialState: function() {
+          return {note: ''}
+        },
+
+        onNoteChange: function(event){
+          event.preventDefault();
+          this.setState({
+            note: event.target.value
+          })
+        },
+
+        render: function() {
+          return (
+            <form action="Post">
+              <h1>
+                <input
+                  type="textarea"
+                  value={this.state.note}
+                  onChange={this.onNoteChange}
+                  placeholder="Put your note here..." />
+              </h1>
+              <button className="btn btn-primary">
+                Save Note
+              </button>
+            </form>
+          )
+        }
+      });
+
+
+      setInterval(function(){
+        ReactDOM.render(<NotesBox date={new Date()} />, document.getElementById('example'))
+      }, 10)
+    </script>
+  </body>
+</html>
