@@ -14,19 +14,38 @@
     <![endif]-->
   </head>
   <body>
-    <h1>React-Notes</h1>
-    <h3>The goal of this exercise is to use react correctly in order to create an app that saves notes in a JSON file.</h3>
-    <ol>
-      <li><i class="fa fa-check" aria-hidden="true"></i> Get Libs Loaded Successfully.</li>
-      <li><i class="fa fa-check" aria-hidden="true"></i> Get Hello Loaded via Component.</li>
-      <li><i class="fa fa-check" aria-hidden="true"></i> Get Input Field On Page.</li>
-      <li><i class="fa fa-check" aria-hidden="true"></i> Add a Submit Button</li>
-      <li><i class="fa fa-check" aria-hidden="true"></i> Start A Server via Hapi</li>
-      <li><i class="fa fa-check" aria-hidden="true"></i> Create A Route To Your <code>index.html</code> In Your Server</li>
-      <li>Get Static Data Loaded on The Page</li>
-    </ol>
+    <div class="container">
+      <div class="col-md-6">
+        <h1>Notes</h1>
+        <hr>
+        <div class="react-endpoint" id="example">
+        </div>
+      </div>
 
-    <div class="react-endpoint" id="example">
+      <div class="col-md-6">
+        <h1>React-Notes-App-Breakdown</h1>
+      <hr>
+        <h3>The goal of this exercise is to use react correctly in order to create an app that saves notes in a JSON file.</h3>
+        <hr>
+        <ol>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Get Libs Loaded Successfully.</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Get Hello Loaded via Component.</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Get Input Field On Page.</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Add a Submit Button</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Start A Server via Hapi</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Create A Route To Your <code>index.html</code> In Your Server</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Create a JSON file with mock note data</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Create A Route For Getting JSON and Make CURL To Test</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Create a Previous Notes Component</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Figure out how make a AJAX request using jQuery</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Get Static Data Loaded on The Page</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Reformat page into two columns.</li>
+          <li>Read through code for review</li>
+          <li>Read through react tutorial</li>
+          <li>Implement note saving</li>
+        </ol>
+
+      </div>
 
     </div>
 
@@ -35,13 +54,32 @@
     <script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
     <script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
-
+    <script type="text/javascript">
+      console.log($.ajax('http://localhost:3000/api/notes'));
+    </script>
     <script type="text/babel">
       var NotesBox = React.createClass({
+        getInitialState: function(){
+          return { notes: []}
+        },
+
+        componentDidMount: function(){
+          $.ajax({
+            url: this.props.notesUrl,
+            dataType: 'json',
+            success: (data) => {
+              this.setState({notes: data});
+            },
+            failure: function(data){
+              console.error('USER (MCALE) CREATED ERROR: ' +  data);
+            }
+          });
+        },
+
         render: function(){
           return (
             <div class="NotesBox">
-
+              <NotesData notes={this.state.notes} />
               <NotesForm />
               <p>It is {this.props.date.toTimeString()}</p>
             </div>
@@ -80,9 +118,36 @@
         }
       });
 
+      var NotesData =  React.createClass({
+
+        render: function() {
+          var noteNode =  this.props.notes.map((note) => {
+            return (
+              <Note name={note.name} text={note.text}/>
+            )
+          });
+          return (
+            <div>{noteNode}</div>
+          )
+        }
+      });
+
+      var Note =  React.createClass({
+        render: function(){
+          return (
+            <div className='note'>
+             <h3>
+              {this.props.name}
+             </h3>
+             <p>{this.props.text}</p>
+            </div>
+          )
+        }
+      });
+
 
       setInterval(function(){
-        ReactDOM.render(<NotesBox date={new Date()} />, document.getElementById('example'))
+        ReactDOM.render(<NotesBox notesUrl='/api/notes' date={new Date()} />, document.getElementById('example'))
       }, 10)
     </script>
   </body>
