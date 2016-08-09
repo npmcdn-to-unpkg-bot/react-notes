@@ -54,9 +54,6 @@
     <script src="https://npmcdn.com/react@15.3.0/dist/react.js"></script>
     <script src="https://npmcdn.com/react-dom@15.3.0/dist/react-dom.js"></script>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
-    <script type="text/javascript">
-      console.log($.ajax('http://localhost:3000/api/notes'));
-    </script>
     <script type="text/babel">
       var NotesBox = React.createClass({
         getInitialState: function(){
@@ -70,7 +67,7 @@
             success: (data) => {
               this.setState({notes: data});
             },
-            failure: function(data){
+            failure: (data) => {
               console.error('USER (MCALE) CREATED ERROR: ' +  data);
             }
           });
@@ -78,10 +75,9 @@
 
         render: function(){
           return (
-            <div class="NotesBox">
+            <div className="NotesBox">
               <NotesData notes={this.state.notes} />
               <NotesForm />
-              <p>It is {this.props.date.toTimeString()}</p>
             </div>
           )
         }
@@ -119,15 +115,15 @@
       });
 
       var NotesData =  React.createClass({
-
         render: function() {
-          var noteNode =  this.props.notes.map((note) => {
+          // Learn about map()
+          var noteNodes =  this.props.notes.map((note) => {
             return (
-              <Note name={note.name} text={note.text}/>
+              <Note name={note.name} text={note.text} key={note.id}/>
             )
           });
           return (
-            <div>{noteNode}</div>
+            <div>{noteNodes}</div>
           )
         }
       });
@@ -146,9 +142,10 @@
       });
 
 
-      setInterval(function(){
-        ReactDOM.render(<NotesBox notesUrl='/api/notes' date={new Date()} />, document.getElementById('example'))
-      }, 10)
+      setInterval(function() {
+        ReactDOM.render(<NotesBox notesUrl='/api/notes' />, document.getElementById('example'))
+      }, 100);
+
     </script>
   </body>
 </html>
