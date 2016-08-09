@@ -28,6 +28,15 @@ server.register(inert, (err) => {
   });
 
   server.route({
+	method: 'POST',
+	path: '/api/notes',
+	handler: (request, reply) => {
+	  fs.appendFile(NOTES_DB, 'not quite but close',(err) => {
+	  })
+	}
+  });
+
+  server.route({
     method: 'GET',
     path: '/',
     handler: (request, reply) => {

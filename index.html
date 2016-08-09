@@ -40,8 +40,8 @@
           <li><i class="fa fa-check" aria-hidden="true"></i> Figure out how make a AJAX request using jQuery</li>
           <li><i class="fa fa-check" aria-hidden="true"></i> Get Static Data Loaded on The Page</li>
           <li><i class="fa fa-check" aria-hidden="true"></i> Reformat page into two columns.</li>
-          <li>Read through code for review</li>
-          <li>Read through react tutorial</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Read through code for review</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Add POST function to form</li>
           <li>Implement note saving</li>
         </ol>
 
@@ -73,11 +73,19 @@
           });
         },
 
+		handleNoteSubmit: function(note){
+			$.ajax({
+				url: this.props.notesUrl,
+				method: 'POST',
+				data: note
+			})
+		},
+
         render: function(){
           return (
             <div className="NotesBox">
               <NotesData notes={this.state.notes} />
-              <NotesForm />
+              <NotesForm onNoteSubmit={this.handleNoteSubmit} />
             </div>
           )
         }
@@ -89,21 +97,36 @@
           return {note: ''}
         },
 
-        onNoteChange: function(event){
+        handleNoteChange: function(event){
           event.preventDefault();
           this.setState({
             note: event.target.value
           })
         },
 
+		handleSubmit: function(event){
+		  event.preventDefault();
+		  var note = this.state.note.trim();
+
+		  if (!note) {
+		  	return;
+		  }
+
+		  this.props.onNoteSubmit({note: note})
+
+		  this.setState({
+			note: ''
+		  })
+		},
+
         render: function() {
           return (
-            <form action="Post">
+            <form action="Post" onSubmit={this.handleSubmit}>
               <h1>
                 <input
                   type="textarea"
                   value={this.state.note}
-                  onChange={this.onNoteChange}
+                  onChange={this.handleNoteChange}
                   placeholder="Put your note here..." />
               </h1>
               <button className="btn btn-primary">
