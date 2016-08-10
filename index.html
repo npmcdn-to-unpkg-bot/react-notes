@@ -47,8 +47,8 @@
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Make button work</li>
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Add other fields</li>
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Apply fresh paint (newer CSS)</li>
-		  <li>Create add picture button component</li>
-		  <li>Include add pic button in note from component</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Create add picture button component</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Include add pic button in note from component</li>
 		  <li>Look into file upload</li>
 		  <li>Switch database from JSON file to real DB</li>
 		  <li>Look into deploying app</li>
@@ -166,6 +166,7 @@
                   onChange={this.handleNoteChange}
                   placeholder="Put your note here..." />
               </h1>
+			  <AddPicButton />
               <button className="btn btn-primary btn-block" type="submit">
                 Save Note
               </button>
@@ -200,6 +201,16 @@
           )
         }
       });
+
+	  var AddPicButton =  React.createClass({
+		  render: function() {
+			  return (
+				  <button className="btn btn-primary btn-block">
+				  	Add Picture
+				  </button>
+			  )
+		  }
+	  });
 
     ReactDOM.render(<NotesBox notesUrl='/api/notes' />,document.getElementById('example'));
 
