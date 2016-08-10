@@ -31,8 +31,17 @@ server.register(inert, (err) => {
 	method: 'POST',
 	path: '/api/notes',
 	handler: (request, reply) => {
-	  fs.appendFile(NOTES_DB, 'not quite but close',(err) => {
-	  })
+		fs.readFile(NOTES_DB, (err, data) => {
+			var notes = JSON.parse(data);
+			notes.push({user: request.payload.user, id: Date.now().toString(), text:request.payload.note});
+			fs.writeFile(NOTES_DB, JSON.stringify(notes), (err) => {
+				if(err){
+					console.error(err);
+				}
+				reply('/');
+			});
+
+		});
 	}
   });
 
@@ -45,7 +54,6 @@ server.register(inert, (err) => {
   });
 
 });
-
 
 server.start((err) => {
   if (err) {

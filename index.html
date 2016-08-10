@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>React Notes</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/lumen/bootstrap.min.css" rel="stylesheet" integrity="sha384-gv0oNvwnqzF6ULI9TVsSmnULNb3zasNysvWwfT/s4l8k5I+g6oFz9dye0wg3rQ2Q" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -42,7 +42,12 @@
           <li><i class="fa fa-check" aria-hidden="true"></i> Reformat page into two columns.</li>
           <li><i class="fa fa-check" aria-hidden="true"></i> Read through code for review</li>
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Add POST function to form</li>
-          <li>Implement note saving</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Learn how to use HAPI for POSTs</li>
+          <li><i class="fa fa-check" aria-hidden="true"></i> Implement note saving</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Make button work</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Add other fields</li>
+		  <li>Apply fresh paint (newer CSS)</li>
+		  <li>Look into file upload</li>
         </ol>
 
       </div>
@@ -56,35 +61,44 @@
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
     <script type="text/babel">
       var NotesBox = React.createClass({
-        getInitialState: function(){
-          return { notes: []}
+
+		getNotesFromServer: function() {
+			$.ajax({
+              url: this.props.notesUrl,
+              dataType: 'json',
+              success: (data) => {
+                this.setState({data: data});
+              },
+              failure: (data) => {
+                console.error('USER (MCALE) CREATED ERROR: ' +  data);
+              }
+            });
+		},
+
+		getInitialState: function(){
+          return { data: [] }
         },
 
         componentDidMount: function(){
-          $.ajax({
-            url: this.props.notesUrl,
-            dataType: 'json',
-            success: (data) => {
-              this.setState({notes: data});
-            },
-            failure: (data) => {
-              console.error('USER (MCALE) CREATED ERROR: ' +  data);
-            }
-          });
+			this.getNotesFromServer();
         },
 
-		handleNoteSubmit: function(note){
+		handleNoteSubmit: function(data){
 			$.ajax({
 				url: this.props.notesUrl,
 				method: 'POST',
-				data: note
-			})
+				data: data,
+				success: (data) => {
+					this.getNotesFromServer();
+				}
+			});
+
 		},
 
         render: function(){
           return (
             <div className="NotesBox">
-              <NotesData notes={this.state.notes} />
+              <NotesData data={this.state.data} />
               <NotesForm onNoteSubmit={this.handleNoteSubmit} />
             </div>
           )
@@ -94,7 +108,7 @@
       var NotesForm =  React.createClass({
 
         getInitialState: function() {
-          return {note: ''}
+          return {note: '', user: ''}
         },
 
         handleNoteChange: function(event){
@@ -104,32 +118,51 @@
           })
         },
 
+		handleUserChange: function(event){
+		  event.preventDefault();
+		  this.setState({
+			user: event.target.value
+		  })
+		},
+
 		handleSubmit: function(event){
 		  event.preventDefault();
 		  var note = this.state.note.trim();
+		  var user = this.state.user.trim();
 
-		  if (!note) {
+
+		  if (!note || !user) {
 		  	return;
 		  }
 
-		  this.props.onNoteSubmit({note: note})
+		  this.props.onNoteSubmit({note: note, user: user})
 
 		  this.setState({
-			note: ''
+			note: '',
+			user: ''
 		  })
 		},
 
         render: function() {
           return (
             <form action="Post" onSubmit={this.handleSubmit}>
+			<h1>
+			  <input
+			  	className="form-control"
+				type="text"
+				value={this.state.user}
+				onChange={this.handleUserChange}
+				placeholder="Put your name here..." />
+			</h1>
               <h1>
-                <input
-                  type="textarea"
+                <textarea
+				  className="form-control"
+				  rows="5"
                   value={this.state.note}
                   onChange={this.handleNoteChange}
                   placeholder="Put your note here..." />
               </h1>
-              <button className="btn btn-primary">
+              <button className="btn btn-primary" type="submit">
                 Save Note
               </button>
             </form>
@@ -139,10 +172,10 @@
 
       var NotesData =  React.createClass({
         render: function() {
-          // Learn about map()
-          var noteNodes =  this.props.notes.map((note) => {
+          // TODO: Learn about map()
+          var noteNodes =  this.props.data.map((note) => {
             return (
-              <Note name={note.name} text={note.text} key={note.id}/>
+              <Note user={note.user} text={note.text} key={note.id}/>
             )
           });
           return (
@@ -156,7 +189,7 @@
           return (
             <div className='note'>
              <h3>
-              {this.props.name}
+              {this.props.user}
              </h3>
              <p>{this.props.text}</p>
             </div>
