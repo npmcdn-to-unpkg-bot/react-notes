@@ -98,8 +98,8 @@
         render: function(){
           return (
             <div className="NotesBox">
-              <NotesData data={this.state.data} />
-              <NotesForm onNoteSubmit={this.handleNoteSubmit} />
+				<NotesForm onNoteSubmit={this.handleNoteSubmit} />
+            	<NotesData data={this.state.data} />
             </div>
           )
         }
@@ -162,7 +162,7 @@
                   onChange={this.handleNoteChange}
                   placeholder="Put your note here..." />
               </h1>
-              <button className="btn btn-primary" type="submit">
+              <button className="btn btn-primary btn-block" type="submit">
                 Save Note
               </button>
             </form>
@@ -173,7 +173,7 @@
       var NotesData =  React.createClass({
         render: function() {
           // TODO: Learn about map()
-          var noteNodes =  this.props.data.map((note) => {
+          var noteNodes =  this.props.data.reverse().map((note) => {
             return (
               <Note user={note.user} text={note.text} key={note.id}/>
             )
@@ -197,10 +197,7 @@
         }
       });
 
-
-      setInterval(function() {
-        ReactDOM.render(<NotesBox notesUrl='/api/notes' />, document.getElementById('example'))
-      }, 100);
+    ReactDOM.render(<NotesBox notesUrl='/api/notes' />,document.getElementById('example'));
 
     </script>
   </body>
