@@ -52,7 +52,10 @@
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Update example to app div</li>
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Find HAPI tutorial</li>
 		  <li>Create repo for HAPI repo</li>
-		  <li>Do examples in HAPI getting started</li>
+		  <li>Provide link to that repo here</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Do examples in HAPI getting started</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Add file type input to add picture button.</li>
+		  <li>Fix styling for Add Picture Button</li>
 		  <li>Look into file upload</li>
 		  <li>Switch database from JSON file to real DB</li>
 		  <li>Look into deploying app</li>
@@ -209,10 +212,10 @@
 	  var AddPicButton =  React.createClass({
 		  render: function() {
 			  return (
-				  <button className="btn btn-primary btn-block">
-				  	Add Picture
-				  </button>
-			  )
+				  <div className="fileUpload btn btn-primary">
+				      <span>Upload</span>
+				      <input type="file" className="upload" />
+				  </div>			  )
 		  }
 	  });
 
