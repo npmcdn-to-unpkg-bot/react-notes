@@ -55,7 +55,9 @@
 		  <li>Provide link to that repo here</li>
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Do examples in HAPI getting started</li>
 		  <li><i class="fa fa-check" aria-hidden="true"></i> Add file type input to add picture button.</li>
-		  <li>Fix styling for Add Picture Button</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Add label to upload button</li>
+		  <li><i class="fa fa-check" aria-hidden="true"></i> Fix styling for Add Picture Button</li>
+		  <li>Learn how to create a request with a picture included.</li>
 		  <li>Look into file upload</li>
 		  <li>Switch database from JSON file to real DB</li>
 		  <li>Look into deploying app</li>
@@ -136,6 +138,10 @@
 		  })
 		},
 
+		addPictureToForm: function(event){
+			console.log(event);
+		},
+
 		handleSubmit: function(event){
 		  event.preventDefault();
 		  var note = this.state.note.trim();
@@ -173,7 +179,7 @@
                   onChange={this.handleNoteChange}
                   placeholder="Put your note here..." />
               </h1>
-			  <AddPicButton />
+			  <AddPicButton onPictureAdd={this.addPictureToForm}/>
               <button className="btn btn-primary btn-block" type="submit">
                 Save Note
               </button>
@@ -209,13 +215,25 @@
         }
       });
 
+
+
 	  var AddPicButton =  React.createClass({
+
+		addPicStyle : {
+		    display: 'none'
+		},
+
+		addPicture: function(e) {
+			console.log(e);
+			this.props.onPictureAdd(e);
+		},
+
 		  render: function() {
 			  return (
-				  <div className="fileUpload btn btn-primary">
-				      <span>Upload</span>
-				      <input type="file" className="upload" />
-				  </div>			  )
+				  <label className="btn btn-primary btn-block">
+					Picture <input type="file" style={this.addPicStyle} onChange={this.addPicture}/>
+				  </label>
+				)
 		  }
 	  });
 
