@@ -28,21 +28,26 @@ server.register(inert, (err) => {
   });
 
   server.route({
-	method: 'POST',
-	path: '/api/notes',
-	handler: (request, reply) => {
-		fs.readFile(NOTES_DB, (err, data) => {
-			var notes = JSON.parse(data);
-			notes.push({user: request.payload.user, id: Date.now().toString(), text:request.payload.note});
-			fs.writeFile(NOTES_DB, JSON.stringify(notes), (err) => {
-				if(err){
-					console.error(err);
-				}
-				reply('/');
-			});
+    method: 'POST',
+    path: '/api/notes',
+    handler: (request, reply) => {
+      fs.readFile(NOTES_DB, (err, data) => {
+        var notes = JSON.parse(data);
+        notes.push({
+          user: request.payload.user,
+          id: Date.now()
+            .toString(),
+          text: request.payload.note
+        });
+        fs.writeFile(NOTES_DB, JSON.stringify(notes), (err) => {
+          if (err) {
+            console.error(err);
+          }
+          reply('/');
+        });
 
-		});
-	}
+      });
+    }
   });
 
   server.route({
@@ -53,6 +58,43 @@ server.register(inert, (err) => {
     }
   });
 
+});
+
+server.route({
+  method: 'POST',
+  path: '/submitPhoto',
+  config: {
+
+    payload: {
+      output: 'stream',
+      parse: true,
+      allow: 'multipart/form-data'
+    },
+
+    handler: function(request, reply) {
+      var data = request.payload;
+      if (data.file) {
+        var name = data.file.hapi.filename;
+        var path = __dirname + "/uploadedPhotos/" + name;
+        var file = fs.createWriteStream(path);
+
+        file.on('error', function(err) {
+          console.error(err)
+        });
+
+        data.file.pipe(file);
+
+        data.file.on('end', function(err) {
+          var ret = {
+            filename: data.file.hapi.filename,
+            headers: data.file.hapi.headers
+          }
+          reply(JSON.stringify(ret));
+        })
+      }
+
+    }
+  }
 });
 
 server.start((err) => {
