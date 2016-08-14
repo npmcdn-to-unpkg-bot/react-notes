@@ -4,11 +4,56 @@ const fs = require('fs');
 const path = require('path');
 const Hapi = require('hapi');
 const inert = require('inert');
+const Good = require('good');
 const server = new Hapi.Server();
 const port = 3000;
 const NOTES_DB = path.join(__dirname, 'noteDB.json')
 
 server.connection({ port: port });
+
+server.route({
+  method: 'POST',
+  path: '/api/notes',
+  config: {
+    handler: (request, reply) => {
+      var requestData = request.payload;
+      fs.readFile(NOTES_DB, (err, data) => {
+        var notes = JSON.parse(data);
+        notes.push({
+          user: requestData.user,
+          id: Date.now()
+            .toString(),
+          text: requestData.note
+        });
+        fs.writeFile(NOTES_DB, JSON.stringify(notes), (err) => {
+          if (err) {
+            console.error(err);
+          }
+
+          if (requestData.displayImage_) {
+            displayImage_ = requestData.displayImage_;
+            console.log('picture was included');
+            var name = displayImage_.hapi.filename;
+            var path = __dirname + "/uploadedPhotos/" + name;
+            var file = fs.createWriteStream(path);
+
+            file.on('error', function(err) {
+              console.error(err)
+            });
+
+            displayImage_.pipe(file);
+          }
+          console.log('here fo real>>>');
+
+          reply('/');
+        });
+      });
+    }
+  }
+
+});
+
+
 server.register(inert, (err) => {
   if (err) {
     console.error(err);
@@ -27,28 +72,6 @@ server.register(inert, (err) => {
     }
   });
 
-  server.route({
-    method: 'POST',
-    path: '/api/notes',
-    handler: (request, reply) => {
-      fs.readFile(NOTES_DB, (err, data) => {
-        var notes = JSON.parse(data);
-        notes.push({
-          user: request.payload.user,
-          id: Date.now()
-            .toString(),
-          text: request.payload.note
-        });
-        fs.writeFile(NOTES_DB, JSON.stringify(notes), (err) => {
-          if (err) {
-            console.error(err);
-          }
-          reply('/');
-        });
-
-      });
-    }
-  });
 
   server.route({
     method: 'GET',
@@ -60,46 +83,35 @@ server.register(inert, (err) => {
 
 });
 
-server.route({
-  method: 'POST',
-  path: '/submitPhoto',
-  config: {
 
-    payload: {
-      output: 'stream',
-      parse: true,
-      allow: 'multipart/form-data'
-    },
 
-    handler: function(request, reply) {
-      var data = request.payload;
-      if (data.file) {
-        var name = data.file.hapi.filename;
-        var path = __dirname + "/uploadedPhotos/" + name;
-        var file = fs.createWriteStream(path);
-
-        file.on('error', function(err) {
-          console.error(err)
-        });
-
-        data.file.pipe(file);
-
-        data.file.on('end', function(err) {
-          var ret = {
-            filename: data.file.hapi.filename,
-            headers: data.file.hapi.headers
-          }
-          reply(JSON.stringify(ret));
-        })
-      }
-
+server.register({
+  register: Good,
+  options: {
+    reporters: {
+      console: [{
+        module: 'good-squeeze',
+        name: 'Squeeze',
+        args: [{
+          response: '*',
+          log: '*'
+        }]
+      }, {
+        module: 'good-console'
+      }, 'stdout']
     }
   }
-});
+}, (err) => {
 
-server.start((err) => {
   if (err) {
-    console.error(err);
+    throw err; // something bad happened loading the plugin
   }
-  console.log("Server Running On: " + port);
+
+  server.start((err) => {
+
+    if (err) {
+      throw err;
+    }
+    server.log('info', 'Server running at: ' + server.info.uri);
+  });
 });

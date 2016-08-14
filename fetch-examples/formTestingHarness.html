@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>form testing harness</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="jumbotron">
+      <h1>fetch()</h1>
+    </div>
+    <div class="container">
+      <div class="col-md-6">
+        <form action="http://localhost:3000/api/notes" method="post" enctype="multipart/form-data" onsubmit="myFunction()">
+          <input type="text" name="displayText_" value="" />
+          <input type="file" name="displayImage_" value="" />
+          <input type="submit">
+        </form>
+      </div>
+      <div class="col-md-6">
+        <ol>
+          <li>Make harness page</li>
+          <li>Make form</li>
+        </ol>
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+      function myFunction() {
+        alert('Your form was submitted');
+      }
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </body>
+</html>
